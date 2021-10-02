@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Добавить пользователя</title>
+</head>
+<body>
+<h2>  </h2>
+<div>
+    <form th:action="@{/admin/add}" th:object="${user}" method="post" accept-charset="utf-8">
+        <fieldset>
+            <legend>Данные пользователя</legend>
+            <p>
+                <label th:for="name">Имя</label>
+                <input required type="text" placeholder="Имя" name="name" th:id="name" th:value="${user.getName()}">
+            </p>
+            <p>
+                <label th:for="lastName">Фамилия</label>
+                <input required type="text" placeholder="Фамилия" name="lastname" th:id="lastname" th:value="${user.getLastname()}"><br/>
+
+            </p>
+            <p>
+                <label th:for="email">Почтовый ящик</label>
+                <input required type="text" placeholder="Ваш адрес эл.почты" name="email" th:id="email"  th:value="${user.getEmail()}"><br/>
+            </p>
+            <p>
+                <label th:for="foneNumber">Номер телефона</label>
+                <input type="tel" placeholder="+7-903-56-89"
+                       pattern="\+\d-\d{3}-\d{2}-\d{2}" name="foneNumber" th:id="foneNumber" th:value="${user.getFoneNumber()}"><br/>
+            </p>
+        </fieldset>
+        <form th:action="@{/admin}">
+            <button type="submit">Сохранить пользователя</button>
+        </form>
+    </form>
+    <br/>
+    <form th:action="@{/admin}">
+        <button type="submit" class="btn btn-outline-danger">Назад к списку пользователей</button>
+    </form>
+</div>
+</body>
+</html>
