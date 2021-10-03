@@ -1,8 +1,8 @@
 package com.example.springboot.dao;
 
+import com.example.springboot.model.Role;
 import com.example.springboot.model.User;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface UserDao {
@@ -11,6 +11,9 @@ public interface UserDao {
     void editUser(User user);
     User getUserById(Long id);
     List<User> listUsers();
-    @Transactional
     User findUserByLogin(String login);
+    Role getRole(String name);
+    List<Role> getAllRoles();
+    User getByEmail(String email);
+    User getByName(String firstName);
 }

@@ -1,60 +1,73 @@
 package com.example.springboot.controller;
 
+import com.example.springboot.model.Role;
 import com.example.springboot.model.User;
 import com.example.springboot.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
+    private final PasswordEncoder encoder;
 
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, PasswordEncoder encoder) {
         this.userService = userService;
+        this.encoder = encoder;
     }
 
 
-    @GetMapping(value = "/admin")
-    public String UserController(ModelMap model) {
+    @GetMapping("")
+    public String userList(@ModelAttribute("newUser") User newUser, Model model, Principal principal) {
+        model.addAttribute("user", userService.findUserByLogin(principal.getName()));
+        model.addAttribute("allRoles" , userService.getAllRoles());
+        model.addAttribute("newUser", newUser);
         model.addAttribute("users", userService.listUsers());
-        return "User";
+        return "admin_panel";
     }
 
-    @GetMapping("/admin/edit")
-    public String editUser(@RequestParam(value = "id", required = false) Long id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        return "editPage";
+    @PostMapping("/create")
+    public String saveUser(@ModelAttribute("user") User user,
+                           @RequestParam(value = "role", required = false) String[] roles) {
+        Set<Role> roleSet = new HashSet<>();
+        if (roles != null) {
+            for (String role : roles) {
+                roleSet.add(userService.getRole(role));
+            }
+        }
+        user.setPassword(encoder.encode(user.getPassword()));
+        user.setRole(roleSet);
+        userService.add(user);
+        return "redirect:/admin";
     }
 
-    @PostMapping(value = "/admin/edit")
-    public String editUser(@ModelAttribute("user") User user) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/");
+
+    @PostMapping("/edit/{id}")
+    public String update(@ModelAttribute("user") User user,
+                         @RequestParam(value = "role", required = false) String[] roles) {
+        Set<Role> roleSet = new HashSet<>();
+        if (roles != null) {
+            for (String role : roles) {
+                roleSet.add(userService.getRole(role));
+            }
+        }
+        user.setRole(roleSet);
         userService.editUser(user);
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/delete")
-    public String deleteUserById(@RequestParam(value = "id", required = false) Long id) {
+    //удаление пользователя
+    @PostMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
         userService.delete(id);
-        return "redirect:/admin";
-    }
-
-    @GetMapping(value = "/admin/add")
-    public String addUser(Model model) {
-        User user = new User();
-        model.addAttribute("user", user);
-        return "addUser";
-    }
-
-    @PostMapping(value = "/admin/add")
-    public String addUser(@ModelAttribute("user") User user) {
-        userService.add(user);
         return "redirect:/admin";
     }
 }

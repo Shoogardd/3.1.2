@@ -18,6 +18,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+
     private final UserService userDetailsService;
     private final LoginSuccessHandler successUserHandler;
 
@@ -25,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.userDetailsService = userDetailsService;
         this.successUserHandler = successUserHandler;
     }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -45,7 +47,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID")
-                .logoutSuccessUrl("/login");
+                .logoutSuccessUrl("/login")
+        ;
+
     }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -64,5 +68,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
         return daoAuthenticationProvider;
     }
-
 }

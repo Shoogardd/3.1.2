@@ -1,11 +1,12 @@
 package com.example.springboot.service;
+
 import com.example.springboot.dao.UserDao;
+import com.example.springboot.model.Role;
 import com.example.springboot.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -17,19 +18,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void add(User user) {
         userDao.add(user);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void delete(long id) {
         userDao.delete(id);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void editUser(User user) {
         userDao.editUser(user);
     }
@@ -51,10 +52,35 @@ public class UserServiceImpl implements UserService {
     public User findUserByLogin(String login) {
         return userDao.findUserByLogin(login);
     }
+
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userDao.findUserByLogin(login);
         return User.fromUser(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Role getRole(String name) {
+        return userDao.getRole(name);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Role> getAllRoles() {
+        return userDao.getAllRoles();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getByEmail(String email) {
+        return userDao.getByEmail(email);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getByName(String firstName) {
+        return userDao.getByName(firstName);
     }
 }

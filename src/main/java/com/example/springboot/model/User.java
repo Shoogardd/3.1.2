@@ -6,10 +6,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user")
-public class User  implements UserDetails {
+public class User implements UserDetails {
     @Id
     @Column(name = "user_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +31,8 @@ public class User  implements UserDetails {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "foneNumber")
-    private String foneNumber;
+    @Column(name = "age")
+    private String age;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles",
@@ -50,7 +51,7 @@ public class User  implements UserDetails {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
-        this.foneNumber = foneNumber;
+        this.age = age;
         this.role = role;
     }
 
@@ -122,12 +123,16 @@ public class User  implements UserDetails {
         return this.email;
     }
 
-    public String getFoneNumber() {
-        return this.foneNumber;
-    }
-
     public Set<Role> getRole() {
         return this.role;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 
     public void setId(Long id) {
@@ -154,24 +159,16 @@ public class User  implements UserDetails {
         this.email = email;
     }
 
-    public void setFoneNumber(String foneNumber) {
-        this.foneNumber = foneNumber;
-    }
-
     public void setRole(Set<Role> role) {
         this.role = role;
     }
 
-    public String toString() {
-        return "User(id=" + this.getId() +
-                ", login=" + this.getLogin() +
-                ", password=" + this.getPassword() +
-                ", name=" + this.getName() + ", lastname="
-                + this.getLastname() + ", email=" + this.getEmail() +
-                ", foneNumber=" + this.getFoneNumber() +
-                ", role=" +
-                this.getRole() +
-                ")";
+
+    public String roleToString() {
+        return role.stream()
+                .map(Role::toString)
+                .map(x -> x.substring(5))
+                .collect(Collectors.joining(" "));
     }
 
 }
